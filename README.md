@@ -1,4 +1,4 @@
-# MAP552-anime-visualisation
+# INF552-anime-visualisation
 
 The project of course INF552 of Polytechnique,
 

@@ -1,3 +1,46 @@
+genre_color_set = {
+    'Action': 'rgba(224,42,5,1.0)',
+    'Adventure': 'rgba(67,97,180,1.0)',
+    'Cars': 'rgba(121,195,212,1.0)',
+    'Comedy': 'rgba(79,81,178,1.0)',
+    'Dementia': 'rgba(0,139,44,1.0)',
+    'Demons': 'rgba(46,66,86,1.0)',
+    'Drama': 'rgba(222,61,139,1.0)',
+    'Fantasy': 'rgba(40,52,64,1.0)',
+    'Game': 'rgba(0,141,128,1.0)',
+    'Harem': 'rgba(223,27,91,1.0)',
+    'Historical': 'rgba(184,48,20,1.0)',
+    'Horror': 'rgba(119,135,157,1.0)',
+    'Josei': 'rgba(172,47,105,1.0)',
+    'Kids': 'rgba(245,186,16,1.0)',
+    'Magic': 'rgba(79,81,178,1.0)',
+    'Martial Arts': 'rgba(228,82,32,1.0)',
+    'Mecha': 'rgba(7,75,212,1.0)',
+    'Military': 'rgba(29,132,108,1.0)',
+    'Music': 'rgba(103,103,202,1.0)',
+    'Mystery': 'rgba(124,121,114,1.0)',
+    'Parody': 'rgba(245,75,75,1.0)',
+    'Police': 'rgba(42,49,57,1.0)',
+    'Psychological': 'rgba(236,237,241,1.0)',
+    'Romance': 'rgba(229,109,254,1.0)',
+    'Samurai': 'rgba(164,23,26,1.0)',
+    'School': 'rgba(251,141,131,1.0)',
+    'Sci-Fi': 'rgba(19,33,120,1.0)',
+    'Seinen': 'rgba(33,46,137,1.0)',
+    'Shoujo': 'rgba(88,163,223,1.0)',
+    'Shoujo Ai': 'rgba(255,180,194,1.0)',
+    'Shounen': 'rgba(15,124,136,1.0)',
+    'Shounen Ai': 'rgba(172,215,221,1.0)',
+    'Slice of Life': 'rgba(252,208,70,1.0)',
+    'Space': 'rgba(7,17,54,1.0)',
+    'Sports': 'rgba(40,132,40,1.0)',
+    'Super Power': 'rgba(37,86,133,1.0)',
+    'Supernatural': 'rgba(138,40,12,1.0)',
+    'Thriller': 'rgba(96,93,84,1.0)',
+    'Vampire': 'rgba(112,14,16,1.0)',
+    '\xa0Adventure': 'rgba(67,97,180,1.0)'
+};
+
 var ctx = {
     w: 720,
     h: 720,
@@ -66,16 +109,16 @@ var initSVGcanvas = function(genre_by_year) {
 var populateSVGcanvas = function(genre_by_year) {
     var group = d3.select("#rootG");
     genres_current_year = genre_by_year[ctx.current_year];
-    console.log(genres_current_year);
+    // console.log(genres_current_year);
     Object.keys(genres_current_year).forEach((genre) => {
-
+        color_str = genre_color_set[genre].replace("1.0", "0.9");
         group
             .append("circle")
             .attr("class", "genre_label")
             .attr("cx", ctx.xScale(genres_current_year[genre]['average_favorite']))
             .attr("cy", ctx.yScale(genres_current_year[genre]['average_score']))
-            .attr("r", 1.2 * genres_current_year[genre]['animes'].length)
-            .attr("fill", "rgba(255,0,0, 0.5)");
+            .attr("r", 1.5 * genres_current_year[genre]['animes'].length)
+            .attr("fill", color_str);
     });
 
 
@@ -95,6 +138,7 @@ var loadData = function() {
     d3.json("./data/genre_by_year.json").then(function(data) {
         // console.log(data);
         ctx.DATA.genre_by_year = data;
+        console.log(genre_color_set);
         console.log(ctx.DATA.genre_by_year[ctx.current_year]);
         initSVGcanvas(data);
         populateSVGcanvas(data);

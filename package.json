@@ -1,0 +1,11 @@
+{
+    "name": "inf_552",
+    "version": "1.0.0",
+    "description": "anime data visualisation",
+    "main": "index.html",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Haolin Pan & Kunhao Zheng",
+    "license": "ISC"
+}

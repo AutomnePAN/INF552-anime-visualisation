@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>INF552 - 2020 - PC 02</title>
+    <!-- https://d3js.org/ -->
+    <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet'>
+    <script type="text/javascript" src="js/d3.v6.min.js"></script>
+    <script type="text/javascript" src="js/temporal_graph.js"></script>
+    <style>
+        svg {
+            display: block;
+            border: 1px solid #444;
+            margin-left: auto;
+            margin-right: auto;
+            backgroundColor: lightgrey;
+        }
+        
+        .axisLb {
+            text-anchor: middle;
+            font-family: Bangers, sans-serif;
+            font-size: 1.2rem;
+            color: "#112234";
+        }
+        
+        g {
+            font-family: Bangers, sans-serif;
+        }
+        
+        .genre_label:hover {
+            transform: scale(2);
+        }
+    </style>
+</head>
+
+<body onload="createViz()">
+    <div id="main">
+    </div>
+</body>
+
+</html>

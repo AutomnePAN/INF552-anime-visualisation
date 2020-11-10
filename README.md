@@ -17,4 +17,4 @@ If possible, we will also use some information given by the other data sets in t
 Plot the favorites number and average scores of each genre by year
 
 ### Current Result
-![current result](/result/genre_2000.png)
+![current result](/result/genre_2000.PNG)

@@ -1,3 +1,5 @@
+// const d3 = require("d3");
+
 genre_color_set = {
     'Action': 'rgba(224,42,5,1.0)',
     'Adventure': 'rgba(67,97,180,1.0)',
@@ -48,16 +50,42 @@ var ctx = {
     DATA: {
         genre_by_year: undefined
     },
-    current_year: 2005,
+    current_year: 2015,
 };
 
-var initSVGcanvas = function(genre_by_year) {
+var initSVGcanvas = function() {
+    d3.select("#bkgG").append("g").attr("id", "xaxis");
+    d3.select("#bkgG").append("g").attr("id", "yaxis");
+    d3.select("#bkgG").append("text").attr("id", "xlabel");
+    d3.select("#bkgG").append("text").attr("id", "ylabel");
+
+
+    genre_by_year = ctx.DATA.genre_by_year;
+    var group = d3.select("#rootG");
+    genres_current_year = genre_by_year[ctx.current_year];
+    console.log(genres_current_year);
+    Object.keys(genres_current_year).forEach((genre) => {
+        color_str = genre_color_set[genre].replace("1.0", "0.9");
+        group
+            .append("circle")
+            .attr("class", "genre_label")
+            .attr("id", `${genre}Label`)
+            // .attr("cx", ctx.xScale(genres_current_year[genre]['average_favorite']))
+            // .attr("cy", ctx.yScale(genres_current_year[genre]['average_score']))
+            // .attr("r", 0)
+            // .attr("fill", color_str);
+    });
+
+}
+
+var populateSVGcanvas = function() {
+
+
     // scales to compute (x,y) coordinates from data values to SVG canvas
     var maxFavorite = 0;
-
     var maxScore = 0;
     var minScore = 11;
-
+    genre_by_year = ctx.DATA.genre_by_year;
     genres_current_year = genre_by_year[ctx.current_year]
 
     Object.keys(genres_current_year).forEach((genre) => {
@@ -72,52 +100,50 @@ var initSVGcanvas = function(genre_by_year) {
     console.log(maxFavorite, maxScore, minScore);
 
     // scale star_mass -> x-axis
-    ctx.xScale = d3.scaleLinear().domain([0, maxFavorite + 1000])
+    ctx.xScale = d3.scaleLinear().domain([0, 20000])
         .range([60, ctx.w - 20]);
     // scale planet_mass -> y-axis
-    ctx.yScale = d3.scaleLinear().domain([minScore - 0.5, maxScore + 0.5])
+    ctx.yScale = d3.scaleLinear().domain([minScore - 0.1, maxScore + 0.1])
         .range([ctx.h - 60, 20]);
     // x- and y- axes
 
-    d3.select("#bkgG").append("g")
+    d3.select("#xaxis")
         .attr("transform", `translate(0,${ctx.h-50})`)
         .call(d3.axisBottom(ctx.xScale).ticks(10))
         .selectAll("text")
         .style("text-anchor", "middle");
-    d3.select("#bkgG").append("g")
+    d3.select("#yaxis")
         .attr("transform", "translate(50,0)")
         .call(d3.axisLeft(ctx.yScale).ticks(10))
         .selectAll("text")
         .style("text-anchor", "end");
+
     // x-axis label
-    d3.select("#bkgG")
-        .append("text")
+    d3.select("#xlabel")
         .attr("y", ctx.h - 12)
         .attr("x", ctx.w / 2)
         .classed("axisLb", true)
         .text("Average Favorites");
+
     // y-axis label
-    d3.select("#bkgG")
-        .append("text")
+    d3.select("#ylabel")
         .attr("y", 0)
         .attr("x", 0)
         .attr("transform", `rotate(-90) translate(-${ctx.h/2},18)`)
         .classed("axisLb", true)
         .text("Average Rating");
-}
 
-var populateSVGcanvas = function(genre_by_year) {
     var group = d3.select("#rootG");
     genres_current_year = genre_by_year[ctx.current_year];
     // console.log(genres_current_year);
     Object.keys(genres_current_year).forEach((genre) => {
         color_str = genre_color_set[genre].replace("1.0", "0.9");
-        group
-            .append("circle")
-            .attr("class", "genre_label")
+        group.select(`#${genre}Label`)
+            .transition()
+            .duration(500)
             .attr("cx", ctx.xScale(genres_current_year[genre]['average_favorite']))
             .attr("cy", ctx.yScale(genres_current_year[genre]['average_score']))
-            .attr("r", 1.5 * genres_current_year[genre]['animes'].length)
+            .attr("r", 1.1 * genres_current_year[genre]['animes'].length)
             .attr("fill", color_str);
     });
 
@@ -129,6 +155,7 @@ var createViz = function() {
     var svgEl = d3.select("#main").append("svg");
     svgEl.attr("width", ctx.w);
     svgEl.attr("height", ctx.h);
+    svgEl.attr("class", "canvas");
     var rootG = svgEl.append("g").attr("id", "rootG");
     rootG.append("g").attr("id", "bkgG");
     loadData();
@@ -140,8 +167,25 @@ var loadData = function() {
         ctx.DATA.genre_by_year = data;
         console.log(genre_color_set);
         console.log(ctx.DATA.genre_by_year[ctx.current_year]);
-        initSVGcanvas(data);
-        populateSVGcanvas(data);
+        initSVGcanvas();
+        populateSVGcanvas();
 
     }).catch(function(error) { console.log(error) });
+};
+
+var handleKeyEvent = function(e) {
+    if (e.keyCode === 13) {
+        // enter
+        e.preventDefault();
+        setYear();
+    }
+};
+
+var setYear = function() {
+    var current_year = document.querySelector('#currentYear').value;
+    if (current_year.trim() === '') {
+        return;
+    }
+    ctx.current_year = parseInt(current_year, 10);
+    populateSVGcanvas();
 };

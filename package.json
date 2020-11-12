@@ -7,5 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Haolin Pan & Kunhao Zheng",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "d3": "^6.2.0"
+    }
 }

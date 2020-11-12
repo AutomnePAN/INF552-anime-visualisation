@@ -29,14 +29,55 @@
             font-family: Bangers, sans-serif;
         }
         
-        .genre_label:hover {
-            transform: scale(2);
+        .inputLabel {
+            font-size: 1.5rem;
+            font-family: Bangers;
+        }
+        
+        .inputYear {
+            font-size: 1.2rem;
+            font-family: Bangers;
+            font-weight: 300;
+            margin: 1rem;
+            height: 2rem;
+        }
+        
+        #main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #6da6f0, #d57f7f);
+            -webkit-animation: Gradient 5s ease infinite;
+            -moz-animation: Gradient 5s ease infinite;
+            animation: Gradient 5s ease infinite;
+        }
+        
+        .canvas {
+            background-color: rgba(255, 255, 255, 0.459);
+            margin: 1rem;
+        }
+        
+        @keyframes Gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
     </style>
 </head>
 
 <body onload="createViz()">
     <div id="main">
+        <form>
+            <span class="inputLabel">Current Year</span>
+            <input type="text" name="currentYear" class="inputYear" value="2015" id="currentYear" onkeydown="handleKeyEvent(event);" />
+        </form>
     </div>
 </body>
 

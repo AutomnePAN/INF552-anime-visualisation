@@ -25,4 +25,4 @@ for each genre, plot the score  distribution of the scores for each year
 add fansy header
 
 ### Current Result
-![current result](/result/score_distribution.PNG)
+![current result](result\score_ditribution.PNG)

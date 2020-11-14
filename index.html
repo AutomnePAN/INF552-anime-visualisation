@@ -8,76 +8,28 @@
     <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet'>
     <script type="text/javascript" src="js/d3.v6.min.js"></script>
-    <script type="text/javascript" src="js/temporal_graph.js"></script>
-    <style>
-        svg {
-            display: block;
-            border: 1px solid #444;
-            margin-left: auto;
-            margin-right: auto;
-            backgroundColor: lightgrey;
-        }
-        
-        .axisLb {
-            text-anchor: middle;
-            font-family: Bangers, sans-serif;
-            font-size: 1.2rem;
-            color: "#112234";
-        }
-        
-        g {
-            font-family: Bangers, sans-serif;
-        }
-        
-        .inputLabel {
-            font-size: 1.5rem;
-            font-family: Bangers;
-        }
-        
-        .inputYear {
-            font-size: 1.2rem;
-            font-family: Bangers;
-            font-weight: 300;
-            margin: 1rem;
-            height: 2rem;
-        }
-        
-        #main {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(-45deg, #6da6f0, #d57f7f);
-            -webkit-animation: Gradient 5s ease infinite;
-            -moz-animation: Gradient 5s ease infinite;
-            animation: Gradient 5s ease infinite;
-        }
-        
-        .canvas {
-            background-color: rgba(255, 255, 255, 0.459);
-            margin: 1rem;
-        }
-        
-        @keyframes Gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-    </style>
+    <script type="text/javascript" src="js/heat_map.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body onload="createViz()">
     <div id="main">
-        <form>
+        <!-- <form>
             <span class="inputLabel">Current Year</span>
             <input type="text" name="currentYear" class="inputYear" value="2015" id="currentYear" onkeydown="handleKeyEvent(event);" />
-        </form>
+        </form> -->
+        <div class="header-primary" id="headerPrimary">
+            <h1 class="title">
+                Anime Data Set Visualisation
+            </h1>
+
+            <h2 class="subtitle">
+                Created by Kunhao Zheng and Haolin Pan
+            </h2>
+        </div>
+
+        <div class="section-temporal-graph" id="temporalGraph">
+        </div>
     </div>
 </body>
 

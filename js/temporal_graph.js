@@ -100,10 +100,10 @@ var populateSVGcanvas = function() {
     console.log(maxFavorite, maxScore, minScore);
 
     // scale star_mass -> x-axis
-    ctx.xScale = d3.scaleLinear().domain([0, 20000])
+    ctx.xScale = d3.scaleLinear().domain([0, 25000])
         .range([60, ctx.w - 20]);
     // scale planet_mass -> y-axis
-    ctx.yScale = d3.scaleLinear().domain([minScore - 0.1, maxScore + 0.1])
+    ctx.yScale = d3.scaleLinear().domain([7, 10])
         .range([ctx.h - 60, 20]);
     // x- and y- axes
 

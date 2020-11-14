@@ -43,6 +43,12 @@ g {
     background-color: rgba(255, 255, 255, 0.705);
     margin: 1rem;
     padding: 2rem;
+    transition: .5s;
+}
+
+.canvas:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 12px black;
 }
 
 .h3-title {
@@ -83,6 +89,9 @@ g {
     font-family: Bangers;
     font-size: 3rem;
     background: linear-gradient(-45deg, #091524f2, #112334f2), url("../img/jojo.png");
+    -webkit-animation: Gradient 10s ease infinite;
+    -moz-animation: Gradient 10s ease infinite;
+    animation: Gradient 10s ease infinite;
     color: white;
     padding: 2rem;
     text-align: center;

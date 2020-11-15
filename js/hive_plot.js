@@ -18,6 +18,7 @@ var angle = d3
         .range([hivePlotCfg.innerRadius, hivePlotCfg.outerRadius]),
     color = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(20));
 
+console.log(radius(0));
 // Original input format:
 var nodes = [
     { x: 0, y: 0.1 },

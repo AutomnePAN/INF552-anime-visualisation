@@ -52,7 +52,7 @@ g {
 }
 
 .h3-title {
-    font-family: Bangers;
+    font-family: VT323;
     font-size: 1.5rem;
 }
 
@@ -83,6 +83,10 @@ g {
     padding: 2rem;
     border-radius: 1rem;
     background: linear-gradient(-45deg, #091524, #05242ce5), url("../img/onepiece.png");
+}
+
+.lineG:hover {
+    /* transform: scale(1.1); */
 }
 
 .header-primary {

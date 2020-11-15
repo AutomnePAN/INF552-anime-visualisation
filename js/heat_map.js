@@ -12,9 +12,8 @@ var ctx = {
     hmargin: 10,
     timeParser: d3.timeParse("%Y"),
     timeAxisHeight: 20,
-    linePlot: false,
     valueExtentOverAllSeries: [0, 0],
-
+    showScore: true,
     currentGenre: "Action",
 };
 
@@ -36,7 +35,7 @@ genre_color_set = {
     'Magic': 'rgba(79,81,178,1.0)',
     'Martial Arts': 'rgba(228,82,32,1.0)',
     'Mecha': 'rgba(7,75,212,1.0)',
-    'Military': 'rgba(29,132,108,1.0)',
+    'Military': 'rgba(89,132,78,1.0)',
     'Music': 'rgba(103,103,202,1.0)',
     'Mystery': 'rgba(124,121,114,1.0)',
     'Parody': 'rgba(245,75,75,1.0)',
@@ -51,25 +50,34 @@ genre_color_set = {
     'Shoujo Ai': 'rgba(255,180,194,1.0)',
     'Shounen': 'rgba(15,124,136,1.0)',
     'Shounen Ai': 'rgba(172,215,221,1.0)',
-    'Slice of Life': 'rgba(252,208,70,1.0)',
+    'Slice of Life': 'rgba(252,168,70,1.0)',
     'Space': 'rgba(7,17,54,1.0)',
     'Sports': 'rgba(40,132,40,1.0)',
     'Super Power': 'rgba(37,86,133,1.0)',
     'Supernatural': 'rgba(138,40,12,1.0)',
     'Thriller': 'rgba(96,93,84,1.0)',
     'Vampire': 'rgba(112,14,16,1.0)',
-    '\xa0Adventure': 'rgba(67,97,180,1.0)'
 };
 
 var createMaps = function(data, svgEl, title) {
+    if (ctx.showProportion) {
+        ctx.color = d3.scaleLinear()
+            .domain([0, .01,
+                .2, 1
+            ])
+            .range(["#FFFFFF00", genre_color_set[title].replace("1.0", "0.3"), genre_color_set[title], "black"]);
+    } else {
+        ctx.color = d3.scaleLinear()
+            .domain([0, 1,
+                3, 15
+            ])
+            .range(["#FFFFFF00", genre_color_set[title].replace("1.0", "0.3"), genre_color_set[title], "black"]);
 
-    ctx.color = d3.scaleLinear()
-        .domain([0, 1,
-            3, 15
-        ])
-        .range(["#FFFFFF00", genre_color_set[title].replace("1.0", "0.3"), genre_color_set[title], "black"]);
+    }
 
     ctx.BAND_H = (ctx.totalStripWidth - ctx.scoreLabelWidth) / Object.keys(data).length;
+    target_property = ctx.showScore ? 'score_count_distribution' : 'favorite_count_distribution';
+
     // for each band (city series)
 
     Object.keys(data).forEach(function(s, i) {
@@ -77,6 +85,7 @@ var createMaps = function(data, svgEl, title) {
         // so that bands are juxtaposed vertically
 
         var mapG = svgEl.append("g")
+            .attr("class", "lineG")
             .classed("plot", true)
             .attr("transform",
                 "translate(" + (ctx.hmargin + i * ctx.BAND_H) + "," + ctx.hmargin + ")");
@@ -85,12 +94,12 @@ var createMaps = function(data, svgEl, title) {
         // the line being colored according to the value for that year
 
         mapG.selectAll("line")
-            .data(data[s].score_distribution)
+            .data(data[s][target_property])
             .enter()
             .append("line")
-            .attr("y1", (d, j) => (ctx.stripWidth * (data[2000].score_distribution.length - j)))
+            .attr("y1", (d, j) => (ctx.stripWidth * (data[2000][target_property].length - j)))
             .attr("x1", 0)
-            .attr("y2", (d, j) => (ctx.stripWidth * (data[2000].score_distribution.length - j)))
+            .attr("y2", (d, j) => (ctx.stripWidth * (data[2000][target_property].length - j)))
             .attr("x2", 3)
             .attr("stroke", (d) => ((d == null) ? ctx.GREY_NULL : ctx.color(d)))
             .attr("stroke-width", ctx.stripWidth);
@@ -105,21 +114,35 @@ var createMaps = function(data, svgEl, title) {
     });
 
     // Score axis
-    data[2000].score_distribution.forEach(function(s, i) {
-        if (i % 3 === 0) {
-            svgEl.append("text")
-                .attr("x", ctx.totalStripWidth - ctx.scoreLabelWidth + 2 * ctx.hmargin)
-                .attr("class", "scoreLabel")
-                .attr("y", ctx.hmargin + ctx.stripWidth * (data[2000].score_distribution.length - i))
-                .attr("font-size", "1rem")
-                // .attr("color", "black")
-                .text(7 + i * 0.1);
+    data[2000][target_property].forEach(function(s, i) {
+
+        if (ctx.showScore) {
+            if (i % 3 === 0) {
+                svgEl.append("text")
+                    .attr("x", ctx.totalStripWidth - ctx.scoreLabelWidth + 2 * ctx.hmargin)
+                    .attr("class", "scoreLabel")
+                    .attr("y", ctx.hmargin + ctx.stripWidth * (data[2000][target_property].length - i))
+                    .attr("font-size", "1rem")
+                    // .attr("color", "black")
+                    .text(7 + i * 0.1);
+            }
+        } else {
+            if (i % 5 === 0) {
+                svgEl.append("text")
+                    .attr("x", ctx.totalStripWidth - ctx.scoreLabelWidth + 2 * ctx.hmargin)
+                    .attr("class", "scoreLabel")
+                    .attr("y", ctx.hmargin + ctx.stripWidth * (data[2000][target_property].length - i))
+                    .attr("font-size", "1rem")
+                    // .attr("color", "black")
+                    .text("1e" + (i / 5).toString());
+            }
         }
+
     })
 
     svgEl.append("text")
         .attr("transform",
-            "translate(" + ctx.hmargin + "," + (ctx.stripWidth * (data[2000].score_distribution.length + 10)) + ")")
+            "translate(" + ctx.hmargin + "," + (ctx.stripWidth * (data[2000][target_property].length + 10)) + ")")
         .attr("class", "h3-title")
         .text(title)
 
@@ -131,7 +154,7 @@ var createMaps = function(data, svgEl, title) {
     svgEl.append("g")
         .attr("id", "timeAxis")
         .attr("transform",
-            "translate(" + ctx.hmargin + "," + (ctx.stripWidth * (data[2000].score_distribution.length + 3)) + ")")
+            "translate(" + ctx.hmargin + "," + (ctx.stripWidth * (data[2000][target_property].length + 3)) + ")")
         .call(d3.axisBottom(timeScale).ticks(d3.timeYear.every(5)));
 
 
@@ -166,7 +189,13 @@ var createViz = function() {
     loadData();
 };
 
-var loadData = function(svgEl) {
+var setShowParam = function(evt) {
+    ctx.showScore = document.querySelector('#showParam').value === "score";
+    console.log(ctx.showScore);
+    loadData();
+}
+
+var loadData = function() {
     d3.json("./data/genre_by_year.json").then(function(data) {
         Object.keys(data).forEach(function(g, i) {
             var svgEl = d3.select("#temporalGraph").append("svg");
@@ -176,6 +205,5 @@ var loadData = function(svgEl) {
             svgEl.attr("id", `canvas-${g}`);
             createMaps(data[g], svgEl, g);
         });
-        console.log(data[ctx.currentGenre]);
     }).catch(function(error) { console.log(error) });
 };

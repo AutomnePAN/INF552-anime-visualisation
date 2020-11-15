@@ -22,17 +22,10 @@ Further animation or interaction may be added, such as edge bundling.
 
 ## Task II
 
-In this section we want to focus on how the number of  "favorites" and "score" of each genres varies with the time. 
-So we decided to plot a circle for each genre on the plan defined by "favorites" and "scores", and we used a form to precise a specific year
-An sample is showed in the image below.
+for each genre, we plot the score distribution of the scores for each year, the deeper the color is, the more animes we have in this section.
+From the result, we can already make some conclusions.
 
-### Current Result
-
-![task 2](/result/genre_2000.PNG)
-## Task III
-
-for each genre, plot the score distribution of the scores for each year
-add fansy header
+- we can have an clear impression of the numbers of each genres, and how they different period. Generally speaking, we're getting more and more animes as the time passes.
 
 ### Current Result
 

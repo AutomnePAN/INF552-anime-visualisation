@@ -22,7 +22,9 @@ Further animation or interaction may be added, such as edge bundling.
 
 ## Task II
 
-Plot the favorites number and average scores of each genre by year
+In this section we want to focus on how the number of  "favorites" and "score" of each genres varies with the time. 
+So we decided to plot a circle for each genre on the plan defined by "favorites" and "scores", and we used a form to precise a specific year
+An sample is showed in the image below.
 
 ### Current Result
 

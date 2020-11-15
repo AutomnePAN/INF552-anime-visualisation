@@ -26,6 +26,7 @@ Plot the favorites number and average scores of each genre by year
 
 ### Current Result
 
+![task 2](/result/genre_2000.PNG)
 ## Task III
 
 for each genre, plot the score distribution of the scores for each year
@@ -33,4 +34,4 @@ add fansy header
 
 ### Current Result
 
-![current result](/result/score_ditribution.PNG)
+![task 3](/result/score_ditribution.PNG)

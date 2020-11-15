@@ -26,6 +26,7 @@ for each genre, we plot the score distribution of the scores for each year, the 
 From the result, we can already make some conclusions.
 
 - we can have an clear impression of the numbers of each genres, and how they different period. Generally speaking, we're getting more and more animes as the time passes.
+- we can observe what range of scores animes of each genre usually get.
 
 ### Current Result
 

@@ -3,7 +3,7 @@ var createViz = function () {
     d3.json(
         "https://rawgit.com/cschen1205/js-d3-charts-made-simple/master/data/flare-imports.json"
     ).then(function (nodes) {
-        var plot = new HivePlot("HivePlot", "infoHivePlot", nodes);
+        var plot = new HivePlot("hivePlot", "infoHivePlot", nodes);
     });
 };
 

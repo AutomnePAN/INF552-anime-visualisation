@@ -25,17 +25,17 @@ Further animation or interaction may be added, such as edge bundling.
 for each genre, we plot the score distribution of the scores for each year, the deeper the color is, the more animes we have in this section.
 From the result, we can already make some conclusions.
 
-- we can have an clear impression of the numbers of each genres, and how they different period. Generally speaking, we're getting more and more animes as the time passes.
-- we can observe what range of scores animes of each genre usually get.
+-   we can have an clear impression of the numbers of each genres, and how they different period. Generally speaking, we're getting more and more animes as the time passes.
+-   we can observe what range of scores animes of each genre usually get.
 
 ### Current Result
 
 ![task 3](/result/score_ditribution.PNG)
-
 
 ## Task III
 
 The size of each circle is the total number of fans for each genre, the link represents the number of the co-fans of two genres;
 
 ### current result
+
 ![task 2](/result/fans_number_graph.PNG)

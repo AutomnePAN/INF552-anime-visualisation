@@ -30,11 +30,11 @@ var nodes = [
 ];
 
 var links = [
-    { source: nodes[0], target: nodes[2] },
-    { source: nodes[1], target: nodes[3] },
-    { source: nodes[2], target: nodes[4] },
-    { source: nodes[2], target: nodes[5] },
-    { source: nodes[3], target: nodes[5] },
+    { source: nodes[0], target: nodes[2], count: 4 },
+    { source: nodes[1], target: nodes[3], count: 2 },
+    { source: nodes[2], target: nodes[4], count: 1 },
+    { source: nodes[2], target: nodes[5], count: 1 },
+    { source: nodes[3], target: nodes[5], count: 1 },
 ];
 
 // var nodes = [
@@ -93,6 +93,7 @@ var createViz = function () {
         .attr("x1", radius.range()[0])
         .attr("x2", radius.range()[1]);
 
+    var count = 0;
     svg.selectAll(".link")
         .data(links)
         .enter()
@@ -103,6 +104,9 @@ var createViz = function () {
             d3.hive
                 .link()
                 .angle(function (d) {
+                    console.log(d);
+                    console.log(count);
+                    count++;
                     return angle(d.x);
                 })
                 .radius(function (d) {
@@ -112,6 +116,10 @@ var createViz = function () {
         .style("stroke", function (d) {
             return color(d.source.x);
         })
+        .style("stroke-width", function (d) {
+            return d.count;
+        })
+
         .on("mouseover", function (d) {
             linkMouseover(d3.select(this)._groups[0][0].__data__);
         })

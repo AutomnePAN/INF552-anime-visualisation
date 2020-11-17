@@ -113,3 +113,16 @@ g {
     font-family: VT323;
     font-weight: 200;
 }
+
+.section-cluster-graph {
+    background: linear-gradient(-45deg, #240909f1, #2c1705f5), url("../img/onepiece.png");
+    background-position: cover;
+    margin-top: 5rem;
+    padding: 2rem;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+}

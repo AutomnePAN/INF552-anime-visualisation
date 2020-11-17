@@ -31,3 +31,11 @@ From the result, we can already make some conclusions.
 ### Current Result
 
 ![task 3](/result/score_ditribution.PNG)
+
+
+## Task III
+
+The size of each circle is the total number of fans for each genre, the link represents the number of the co-fans of two genres;
+
+### current result
+![task 2](/result/fans_number_graph.PNG)

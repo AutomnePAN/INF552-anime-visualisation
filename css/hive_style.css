@@ -2,8 +2,8 @@
     stroke: #000;
     stroke-width: 1.5px;
 }
-.hiveplot .node circle {
-    stroke: #000;
+.hiveplot .node rect {
+    stroke: none;
 }
 .hiveplot .link {
     fill: none;
@@ -15,6 +15,13 @@
     stroke: red;
     stroke-width: 2px;
     stroke-opacity: 1;
+}
+.hiveplot .node rect.active {
+    stroke: red;
+    stroke-width: 3px;
+}
+.hiveplot .node circle {
+    stroke: #000;
 }
 .hiveplot .node circle.active {
     stroke: red;

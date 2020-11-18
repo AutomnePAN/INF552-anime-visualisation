@@ -8,7 +8,7 @@ var width = window.innerWidth,
 var angle = d3
     .scalePoint()
     .domain(["anime", "genre", "studio"])
-    .range([-minorAngle, majorAngle, 2 * majorAngle]);
+    .range([-minorAngle, majorAngle, 2 * majorAngle - minorAngle]);
 
 // var angle = d3
 //     .scalePoint()

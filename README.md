@@ -38,4 +38,5 @@ The size of each circle is the total number of fans for each genre, the link rep
 
 ### current result
 
+![task 1](/result/hive_plot.PNG)
 ![task 2](/result/fans_number_graph.PNG)

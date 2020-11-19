@@ -16,7 +16,7 @@ var studioRadius = d3.scaleLinear().range([innerRadius, outerRadius]);
 
 var animeScoreScale = d3
     .scaleSequential()
-    .domain([7, 10])
+    .domain([7.8, 10])
     .interpolator(d3.interpolateRdPu);
 var genreCountScale = d3.scaleLinear().range(["#f6fbfd", "blue"]);
 var studioCountScale = d3.scaleLinear().range(["#ffffe5", "green"]);

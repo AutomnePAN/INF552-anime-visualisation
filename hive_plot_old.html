@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>INF552 - 2020 - Project</title>
+    <!-- https://d3js.org/ -->
+    <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet'>
+    <script type="text/javascript" src="js/d3.v6.min.js"></script>
+    <script type="text/javascript" src="js/d3.hive.v0.min.js"></script>
+    <script type="text/javascript" src="js/hive_plot_old.js"></script>
+    <style>
+        svg {
+            display: block;
+            border: 1px solid #444;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: white;
+        }
+        
+        .axisLb {
+            text-anchor: middle;
+            font-family: Bangers, sans-serif;
+            font-size: 1.2rem;
+            color: "#112234";
+        }
+        
+        g {
+            font-family: Bangers, sans-serif;
+        }
+        
+        .genre_label:hover {
+            transform: scale(2);
+        }
+
+        .link {
+            fill: none;
+            stroke-opacity: 0.8;
+            stroke-width: 1.5px;
+        }
+
+        .axis, .node {
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+        
+        .link.turnedOn {
+            stroke-width: 5px;
+            stroke-opacity: 1;
+        }
+
+        .link.turnedOff {
+            stroke-opacity: 0.1;
+            stroke-width: 1px;
+        }
+
+        .node.turnedOn {
+            stroke: red;
+            stroke-width: 3px;
+        }
+    </style>
+</head>
+
+<body onload="createViz()">
+    <div id="main">
+    </div>
+</body>
+
+</html>

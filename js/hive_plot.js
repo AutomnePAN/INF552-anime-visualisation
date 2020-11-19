@@ -1,180 +1,473 @@
-var hivePlotCfg = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    innerRadius: 40,
-    outerRadius: 240,
-};
-
-var groupings = 3; ///number of groups
-var nnodes = 25; ///number of nodes
-var nlinks = 150; /// number of links
+var width = window.innerWidth,
+    height = window.innerHeight,
+    innerRadius = 40,
+    outerRadius = window.innerHeight / 2,
+    majorAngle = (4 * Math.PI) / 3,
+    minorAngle = (1 * Math.PI) / 6;
 
 var angle = d3
-        .scalePoint()
-        .domain(d3.range(groupings + 1))
-        .range([0, 2 * Math.PI]),
-    radius = d3
-        .scaleLinear()
-        .range([hivePlotCfg.innerRadius, hivePlotCfg.outerRadius]),
-    color = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(20));
+    .scalePoint()
+    .domain(["anime", "genre", "studio"])
+    .range([-minorAngle, majorAngle, 2 * majorAngle - minorAngle]);
 
-// Original input format:
-var nodes = [
-    { x: 0, y: 0.1 },
-    { x: 0, y: 0.9 },
-    { x: 1, y: 0.2 },
-    { x: 1, y: 0.3 },
-    { x: 2, y: 0.1 },
-    { x: 2, y: 0.8 },
+var animeRadius = d3.scaleLinear().range([innerRadius, outerRadius]);
+var genreRadius = d3.scaleLinear().range([innerRadius, outerRadius]);
+var studioRadius = d3.scaleLinear().range([innerRadius, outerRadius]);
+
+var animeScoreScale = d3
+    .scaleSequential()
+    .domain([7.8, 10])
+    .interpolator(d3.interpolateRdPu);
+var genreCountScale = d3.scaleLinear().range(["#f6fbfd", "blue"]);
+var studioCountScale = d3.scaleLinear().range(["#ffffe5", "green"]);
+
+var default_display_text = [
+    [
+        {
+            text: "Showing high-scored anime dependencies among",
+        },
+        { text: " Production Studio ", color: "#2d6a4f" },
+        { text: "&" },
+    ],
+    [{ text: " Genre ", color: "#023e8a" }, { text: "" }, { text: "" }],
 ];
-
-var links = [
-    { source: nodes[0], target: nodes[2] },
-    { source: nodes[1], target: nodes[3] },
-    { source: nodes[2], target: nodes[4] },
-    { source: nodes[2], target: nodes[5] },
-    { source: nodes[3], target: nodes[5] },
-];
-
-// var nodes = [
-//     { x: 0, y: 0.1 },
-//     { x: 0, y: 0.9 },
-//     { x: 1, y: 0.2 },
-// ];
-// var links = [
-//     { source: nodes[0], target: nodes[2] },
-//     { source: nodes[1], target: nodes[2] }, //use net
-// ];
-
-// var nodes = d3.range(nnodes).map((d) => {
-//     return { x: ~~(Math.random() * groupings), y: Math.random() };
-// });
-
-// var links = d3.range(nlinks).map((d) => {
-//     return {
-//         source: nodes[~~(Math.random() * nnodes)],
-//         target: nodes[~~(Math.random() * nnodes)],
-//     };
-// });
 
 var createViz = function () {
     console.log("Using D3 v" + d3.version);
-    // var svgEl = d3.select("#main").append("svg");
-    // svgEl.attr("width", ctx.w);
-    // svgEl.attr("height", ctx.h);
-    // var rootG = svgEl.append("g").attr("id", "rootG");
-    // rootG.append("g").attr("id", "bkgG");
-    // loadData();
-
     var svg = d3
-        .select("#main")
+        .select("#hivePlot")
         .append("svg")
-        .attr("width", hivePlotCfg.width)
-        .attr("height", hivePlotCfg.height)
+        .attr("width", width)
+        .attr("height", height)
         .append("g")
-        .attr(
-            "transform",
-            "translate(" +
-                hivePlotCfg.width / 2 +
-                "," +
-                hivePlotCfg.height / 2 +
-                ")"
-        );
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    loadData(svg);
+};
+
+var loadData = function (svg) {
+    var promises = [
+        d3.csv("data/data_anime_hive.csv"),
+        d3.json("data/genres.json"),
+        d3.json("data/studios.json"),
+        d3.json("data/anime_genre.json"),
+        d3.json("data/anime_studio.json"),
+        d3.json("data/studio_genre.json"),
+    ];
+    Promise.all(promises)
+        .then((data) => {
+            prePocessingData(data);
+            myHivePlot(svg, data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
+var prePocessingData = function (data) {
+    var keyList = [
+        "anime",
+        "genre",
+        "studio",
+        "anime_genre",
+        "anime_studio",
+        "studio_genre",
+    ];
+    keyList.forEach((elem, index) => {
+        data[index].forEach((d) => {
+            d.key = elem;
+        });
+        data[index].key = elem;
+    });
+
+    data[1].forEach((d) => {
+        d.studioCount = sum(data[5].map((q) => q.genre_id == d.id));
+    });
+
+    data[2].forEach((d) => {
+        d.genreCount = sum(data[5].map((q) => q.studio_id == d.id));
+    });
+    // Set the radius domain.
+    animeRadius.domain(d3.extent(data[0], (d) => d.id));
+    genreRadius.domain(d3.extent(data[1], (d) => d.id));
+    studioRadius.domain(d3.extent(data[2], (d) => d.id));
+    genreCountScale.domain(d3.extent(data[1], (d) => d.count));
+    studioCountScale.domain(d3.extent(data[2], (d) => d.count));
+};
+
+var myHivePlot = function (svg, data) {
+    drawAxis(svg, data.slice(0, 3));
+    drawLinks(svg, data);
+    drawNodes(svg, data);
+    d3.select("#infoHivePlot")
+        .selectAll("text")
+        .data(default_display_text)
+        .enter()
+        .append("text")
+        .selectAll("tspan")
+        .data((d) => d)
+        .enter()
+        .append("tspan")
+        .style("color", (d) => d.color)
+        .text((d) => d.text);
+};
+
+var drawAxis = function (svg, data) {
+    var axisType = data.map((elem) => {
+        return { key: elem.key, count: elem.length };
+    });
 
     svg.selectAll(".axis")
-        .data(d3.range(groupings))
+        .data(axisType)
         .enter()
         .append("line")
         .attr("class", "axis")
-        .attr("transform", function (d) {
-            return "rotate(" + degrees(angle(d)) + ")";
+        .attr("transform", (d) => {
+            return "rotate(" + HivePlot_degrees(angle(d.key)) + ")";
         })
-        .attr("x1", radius.range()[0])
-        .attr("x2", radius.range()[1]);
+        .attr("x1", animeRadius(-2))
+        .attr("x2", (d) => animeRadius(d.count + 2));
+};
 
-    svg.selectAll(".link")
-        .data(links)
-        .enter()
-        .append("path")
-        .attr("class", "link")
-        .attr(
-            "d",
-            d3.hive
-                .link()
-                .angle(function (d) {
-                    return angle(d.x);
-                })
-                .radius(function (d) {
-                    return radius(d.y);
-                })
-        )
-        .style("stroke", function (d) {
-            return color(d.source.x);
-        })
-        .on("mouseover", function (d) {
-            linkMouseover(d3.select(this)._groups[0][0].__data__);
-        })
-        .on("mouseout", mouseout);
+var drawLinks = function (svg, data) {
+    // Draw the links.
+    // console.log(data[0][1]);
+    var animeGenreData = data[3].map((d) => {
+        return { source: data[0][d.anime_id], target: data[1][d.genre_id] };
+    });
+    var animeStudioData = data[4].map((d) => {
+        return { source: data[2][d.studio_id], target: data[0][d.anime_id] };
+    });
+    var studioGenreData = data[5].map((d) => {
+        return { source: data[2][d.studio_id], target: data[1][d.genre_id] };
+    });
+    [animeGenreData, animeStudioData, studioGenreData].forEach((data) => {
+        svg.append("g")
+            .attr("class", "links")
+            .selectAll(".link")
+            .data(data)
+            .enter()
+            .append("path")
+            .attr("class", "link")
+            .attr(
+                "d",
+                HivePlot_link()
+                    .angle((d) => angle(d.key))
+                    .radius((d) => {
+                        if (d.key == "genre") return genreRadius(d.id);
+                        if (d.key == "studio") return studioRadius(d.id);
+                        return animeRadius(d.id);
+                    })
+            )
+            .on("mouseover", (event, d) => HivePlot_linkMouseover(d, svg))
+            .on("mouseout", () => HivePlot_mouseout(svg));
+    });
+};
 
-    svg.selectAll(".node")
+var drawNodes = function (svg, data) {
+    var nodes = data[0].concat(data[1]).concat(data[2]);
+
+    var width = {
+        genre: genreRadius(1) - genreRadius(0),
+        studio: studioRadius(1) - studioRadius(0),
+        anime: animeRadius(1) - animeRadius(0),
+    };
+    var height = 10;
+
+    svg.append("g")
+        .attr("class", "nodes")
+        .selectAll(".node")
         .data(nodes)
         .enter()
-        .append("circle")
+        .append("g")
         .attr("class", "node")
-        .attr("transform", function (d) {
-            return "rotate(" + degrees(angle(d.x)) + ")";
+        .selectAll("rect")
+        .data(nodes)
+        .enter()
+        .append("rect")
+        .attr("x", (d) => {
+            if (d.key == "genre") return genreRadius(d.id);
+            if (d.key == "studio") return studioRadius(d.id);
+            return animeRadius(d.id);
         })
-        .attr("cx", function (d) {
-            return radius(d.y);
+        .attr("width", (d) => {
+            if (d.key == "genre") return width.genre;
+            if (d.key == "studio") return width.studio;
+            return width.anime;
         })
-        .attr("r", 5)
-        .style("fill", function (d) {
-            return color(d.x);
+        .attr("height", height)
+        .attr("transform", (d) => {
+            if (d.key == "genre")
+                return `rotate(${HivePlot_degrees(angle(d.key))}), translate(${
+                    -width.genre / 2
+                },0)`;
+            if (d.key == "studio")
+                return `rotate(${HivePlot_degrees(angle(d.key))}), translate(${
+                    -width.studio / 2
+                },0)`;
+            return `rotate(${HivePlot_degrees(angle(d.key))}), translate(${
+                -width.anime / 2
+            },0)`;
         })
-        .on("mouseover", (d) => {
-            nodeMouseover(d.srcElement);
+        .style("fill", (d) => {
+            if (d.key == "genre") return genreCountScale(d.count);
+            if (d.key == "studio") return studioCountScale(d.count);
+            return animeScoreScale(d.Score);
         })
-        .on("mouseout", mouseout);
-    // clear highlighted nodes or links
-    function mouseout() {
-        svg.selectAll(".turnedOn").classed("turnedOn", false);
-        svg.selectAll(".turnedOff").classed("turnedOff", false);
+        .on("mouseover", (event, d) => HivePlot_nodeMouseover(event, d, svg))
+        .on("mouseout", () => HivePlot_mouseout(svg));
+};
+
+// Highlight the link and connected nodes on mouseover.
+function HivePlot_linkMouseover(d, svg) {
+    svg.selectAll(".link").classed("active", (p) => p === d);
+    svg.selectAll(".node circle").classed(
+        "active",
+        (p) => p === d.source || p === d.target
+    );
+    displayLinkInfo(d);
+}
+
+// Highlight the node and connected links on mouseover.
+function HivePlot_nodeMouseover(event, d, svg) {
+    svg.selectAll(".link").classed(
+        "active",
+        (p) => p.source === d || p.target === d
+    );
+    d3.select(event.srcElement).classed("active", true);
+    displayNodeInfo(d);
+}
+
+// Clear any highlighted nodes or links.
+function HivePlot_mouseout(svg) {
+    svg.selectAll(".active").classed("active", false);
+    updateDisplayText(default_display_text);
+}
+
+var displayLinkInfo = function (d) {
+    if ("anime" == d.source.key && "genre" == d.target.key) {
+        let display_text = [
+            [
+                { text: d.source.Title },
+                { text: " is of genre ", color: "#023e8a" },
+                { text: d.target.genre },
+            ],
+            [{ text: "" }, { text: "" }, { text: "" }],
+        ];
+
+        updateDisplayText(display_text);
+    }
+    if ("studio" == d.source.key && "anime" == d.target.key) {
+        let display_text = [
+            [
+                { text: d.target.Title },
+                { text: " is made by ", color: "#2d6a4f" },
+                { text: d.source.studio },
+            ],
+            [{ text: "" }, { text: "" }, { text: "" }],
+        ];
+
+        updateDisplayText(display_text);
     }
 
-    // highlight link and connected nodes on mouseover
-    function linkMouseover(d) {
-        svg.selectAll(".link")
-            .classed("turnedOn", function (dl) {
-                var node = d3.select(this)._groups[0][0].__data__;
-                return node == d;
-            })
-            .classed("turnedOff", function (dl) {
-                var node = d3.select(this)._groups[0][0].__data__;
-                return !(node == d);
-            });
-        svg.selectAll(".node").classed("turnedOn", function (dl) {
-            var node = d3.select(this)._groups[0][0].__data__;
-            return dl === node.source || dl === node.target;
-        });
-    }
+    if ("studio" == d.source.key && "genre" == d.target.key) {
+        let display_text = [
+            [
+                { text: d.source.studio },
+                { text: " produces anime of genre ", color: "#6930c3" },
+                { text: d.target.genre },
+            ],
+            [{ text: "" }, { text: "" }, { text: "" }],
+        ];
 
-    // highlight node and connected links on mouseover
-    function nodeMouseover(d) {
-        svg.selectAll(".link")
-            .classed("turnedOn", function (dl) {
-                var node = d3.select(this)._groups[0][0].__data__;
-                return node.source === d.__data__ || node.target === d.__data__;
-            })
-            .classed("turnedOff", function (dl) {
-                var node = d3.select(this)._groups[0][0].__data__;
-                return !(
-                    node.source === d.__data__ || node.target === d.__data__
-                );
-            });
-        d3.select(d).classed("turnedOn", true);
+        updateDisplayText(display_text);
     }
 };
 
-function degrees(radians) {
-    return (radians / Math.PI) * 180 - 90;
+var displayNodeInfo = function (d) {
+    if (d.key == "anime") {
+        let display_text = [
+            [
+                { text: d.Title },
+                { text: " is scored by ", color: "#dc2f02" },
+                { text: d.Score },
+            ],
+            [{ text: "" }, { text: "" }, { text: "" }],
+        ];
+        updateDisplayText(display_text);
+    }
+    if (d.key == "genre") {
+        let display_text = [
+            [
+                { text: d.genre },
+                { text: " apprears " },
+                { text: d.count, color: "#dc2f02" },
+            ],
+            [
+                { text: " times in the high-scored anime, and involves " },
+                { text: d.studioCount, color: "#dc2f02" },
+                { text: " studio in this subject" },
+            ],
+        ];
+        updateDisplayText(display_text);
+    }
+    if (d.key == "studio") {
+        let display_text = [
+            [
+                { text: d.studio },
+                { text: " has made in total " },
+                { text: d.count, color: "#dc2f02" },
+            ],
+            [
+                { text: " high-scored anime, and works on " },
+                { text: d.genreCount, color: "#dc2f02" },
+                { text: " kinds of genre" },
+            ],
+        ];
+        updateDisplayText(display_text);
+    }
+};
+var updateDisplayText = function (display_data) {
+    d3.select("#infoHivePlot")
+        .selectAll("text")
+        .data(display_data)
+        .selectAll("tspan")
+        .data((d) => d)
+        .style("color", (d) => d.color)
+        .text((d) => d.text);
+};
+
+// A shape generator for Hive links, based on a source and a target.
+// The source and target are defined in polar coordinates (angle and radius).
+// Ratio links can also be drawn by using a startRadius and endRadius.
+// This class is modeled after d3.svg.chord.
+function HivePlot_link() {
+    var source = (d) => d.source,
+        target = (d) => d.target,
+        angle = (d) => d.angle,
+        startRadius = (d) => d.radius,
+        endRadius = startRadius,
+        arcOffset = -Math.PI / 2;
+
+    function link(d, i) {
+        var s = node(source, this, d, i),
+            t = node(target, this, d, i),
+            x;
+        if (t.a < s.a) (x = t), (t = s), (s = x);
+        if (t.a - s.a > Math.PI) s.a += 2 * Math.PI;
+        var a1 = s.a + (t.a - s.a) / 3,
+            a2 = t.a - (t.a - s.a) / 3;
+        return s.r0 - s.r1 || t.r0 - t.r1
+            ? "M" +
+                  Math.cos(s.a) * s.r0 +
+                  "," +
+                  Math.sin(s.a) * s.r0 +
+                  "L" +
+                  Math.cos(s.a) * s.r1 +
+                  "," +
+                  Math.sin(s.a) * s.r1 +
+                  "C" +
+                  Math.cos(a1) * s.r1 +
+                  "," +
+                  Math.sin(a1) * s.r1 +
+                  " " +
+                  Math.cos(a2) * t.r1 +
+                  "," +
+                  Math.sin(a2) * t.r1 +
+                  " " +
+                  Math.cos(t.a) * t.r1 +
+                  "," +
+                  Math.sin(t.a) * t.r1 +
+                  "L" +
+                  Math.cos(t.a) * t.r0 +
+                  "," +
+                  Math.sin(t.a) * t.r0 +
+                  "C" +
+                  Math.cos(a2) * t.r0 +
+                  "," +
+                  Math.sin(a2) * t.r0 +
+                  " " +
+                  Math.cos(a1) * s.r0 +
+                  "," +
+                  Math.sin(a1) * s.r0 +
+                  " " +
+                  Math.cos(s.a) * s.r0 +
+                  "," +
+                  Math.sin(s.a) * s.r0
+            : "M" +
+                  Math.cos(s.a) * s.r0 +
+                  "," +
+                  Math.sin(s.a) * s.r0 +
+                  "C" +
+                  Math.cos(a1) * s.r1 +
+                  "," +
+                  Math.sin(a1) * s.r1 +
+                  " " +
+                  Math.cos(a2) * t.r1 +
+                  "," +
+                  Math.sin(a2) * t.r1 +
+                  " " +
+                  Math.cos(t.a) * t.r1 +
+                  "," +
+                  Math.sin(t.a) * t.r1;
+    }
+
+    function node(method, thiz, d, i) {
+        var node = method.call(thiz, d, i),
+            a =
+                +(typeof angle === "function"
+                    ? angle.call(thiz, node, i)
+                    : angle) + arcOffset,
+            r0 = +(typeof startRadius === "function"
+                ? startRadius.call(thiz, node, i)
+                : startRadius),
+            r1 =
+                startRadius === endRadius
+                    ? r0
+                    : +(typeof endRadius === "function"
+                          ? endRadius.call(thiz, node, i)
+                          : endRadius);
+        return { r0: r0, r1: r1, a: a };
+    }
+
+    link.source = function (_) {
+        if (!arguments.length) return source;
+        source = _;
+        return link;
+    };
+
+    link.target = function (_) {
+        if (!arguments.length) return target;
+        target = _;
+        return link;
+    };
+
+    link.angle = function (_) {
+        if (!arguments.length) return angle;
+        angle = _;
+        return link;
+    };
+
+    link.radius = function (_) {
+        if (!arguments.length) return startRadius;
+        startRadius = endRadius = _;
+        return link;
+    };
+
+    link.startRadius = function (_) {
+        if (!arguments.length) return startRadius;
+        startRadius = _;
+        return link;
+    };
+
+    link.endRadius = function (_) {
+        if (!arguments.length) return endRadius;
+        endRadius = _;
+        return link;
+    };
+
+    return link;
 }
+
+var HivePlot_degrees = (radians) => (radians / Math.PI) * 180 - 90;
+
+const sum = (arr) => arr.reduce((a, b) => a + b, 0);

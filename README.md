@@ -20,6 +20,10 @@ organized in there groups. Then we would like to add some filters to highlight p
 
 Further animation or interaction may be added, such as edge bundling.
 
+### Current Result
+
+![task 1](/result/hive_plot.PNG)
+
 ## Task II
 
 for each genre, we plot the score distribution of the scores for each year, the deeper the color is, the more animes we have in this section.
@@ -38,5 +42,4 @@ The size of each circle is the total number of fans for each genre, the link rep
 
 ### current result
 
-![task 1](/result/hive_plot.PNG)
 ![task 2](/result/fans_number_graph.PNG)

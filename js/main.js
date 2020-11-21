@@ -26,6 +26,9 @@ var ctx = {
     nodes: [],
     links: [],
 
+    w2: 1000,
+    h2: 1000,
+
 };
 
 
@@ -83,6 +86,12 @@ var loadData = function() {
         d3.json("./data/genre_by_year.json"),
         d3.json("./data/genres_node.json"),
         d3.json("./data/genres_link.json"),
+        d3.csv("data/data_anime_hive.csv"),
+        d3.json("data/genres.json"),
+        d3.json("data/studios.json"),
+        d3.json("data/anime_genre.json"),
+        d3.json("data/anime_studio.json"),
+        d3.json("data/studio_genre.json"),
     ];
 
 
@@ -114,7 +123,17 @@ var loadData = function() {
         createGraphLayout(svgE2);
 
 
-
+        var svgE3 = d3
+            .select("#hivePlot")
+            .append("svg")
+            .attr("width", ctx.w2)
+            .attr("height", ctx.h2)
+            .attr("class", "canvas_dark")
+            .append("g")
+            .attr("transform", "translate(" + ctx.w2 / 2 + "," + ctx.w1 / 2 + ")");
+        console.log([data[3], data[4], data[5], data[6], data[7], data[8]]);
+        prePocessingDataHive([data[3], data[4], data[5], data[6], data[7], data[8]]);
+        myHivePlot(svgE3, [data[3], data[4], data[5], data[6], data[7], data[8]]);
 
     }).catch(function(error) { console.log(error) });
 };

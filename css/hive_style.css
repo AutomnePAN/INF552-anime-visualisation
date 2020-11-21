@@ -2,31 +2,38 @@
     stroke: #000;
     stroke-width: 1.5px;
 }
+
 .hiveplot .node rect {
     stroke: none;
 }
+
 .hiveplot .link {
     fill: none;
     stroke: #cbc0d3;
     stroke-width: 1.5px;
     stroke-opacity: 0.3;
 }
+
 .hiveplot .link.active {
     stroke: red;
     stroke-width: 2px;
     stroke-opacity: 1;
 }
+
 .hiveplot .node rect.active {
     stroke: red;
     stroke-width: 3px;
 }
+
 .hiveplot .node circle {
     stroke: #000;
 }
+
 .hiveplot .node circle.active {
     stroke: red;
     stroke-width: 3px;
 }
+
 #infoHivePlot {
     width: 100%;
     height: 30px;

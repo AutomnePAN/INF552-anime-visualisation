@@ -2,10 +2,10 @@ var simulation = d3.forceSimulation()
     .force("link", d3.forceLink()
         .id(function(d) { return d.id; })
         .distance(function(d) {
-            return 3000 * Math.sqrt((1 / d.count));
+            return 2000 * Math.sqrt((1 / d.count));
         }).strength(0.1))
     .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(1000 / 2, 1000 / 2));
+    .force("center", d3.forceCenter(600 / 2, 600 / 2));
 
 var createGraphLayout = function(svg) {
     var lines = svg.append("g").attr("id", "links");
@@ -73,7 +73,7 @@ var createGraphLayout = function(svg) {
         .enter()
         .append("circle")
         .attr("r", (d, i) => {
-            return Math.max(d['fans_number'] / 50, 8)
+            return Math.max(d['fans_number'] / 70, 5)
         })
         .attr("fill", (d, i) => {
             return genre_color_set[d['id']].replace("1.0", "0.95");
@@ -98,3 +98,79 @@ var createGraphLayout = function(svg) {
     }
 
 };
+
+var createMatrix = function(svg, data) {
+    var ctx_matrix = {
+        totalStripHeight: 400,
+        vmargin: 2,
+        hmargin: 2,
+        BAND_H: 22,
+        titleMargin: 100,
+    };
+
+    color = d3.scaleLinear()
+        .domain([50,
+            200,
+            500,
+            700,
+            900,
+            1200
+        ])
+        .range(["#c2c2c2", "#a2a2a2", "#929292", "#727272", "#525252", "#323232", "#020202"]);
+
+    var title = Object.keys(data[0]);
+
+    data.forEach(function(s, i) {
+        console.log(s);
+        var mapG = svg.append("g")
+            .classed("plot", true)
+            .attr("transform",
+                "translate(" + ctx_matrix.hmargin + "," + (50 + i * ctx_matrix.BAND_H) + ")");
+        console.log(Object.values(s));
+
+        mapG.append("text")
+            .attr("font-size", "16px")
+            .attr("fill", genre_color_set[Object.keys(s)[i + 1]])
+            .attr("transform",
+                "translate(0, " + 3 / 4 * ctx_matrix.BAND_H + ")")
+            .text(Object.keys(s)[i + 1]);
+
+        mapG.selectAll("line")
+            .data(Object.values(s).slice(1, Object.values(s).length))
+            .enter()
+            .append("line")
+            .attr("x1", (d, j) => (ctx_matrix.titleMargin + ctx_matrix.hmargin + ctx_matrix.BAND_H * j))
+            .attr("y1", ctx_matrix.vmargin)
+            .attr("x2", (d, j) => (ctx_matrix.titleMargin + ctx_matrix.hmargin + ctx_matrix.BAND_H * j))
+            .attr("y2", ctx_matrix.BAND_H - ctx_matrix.vmargin)
+            .attr("stroke", (d, j) => (color(d)))
+            .attr("stroke-width", ctx_matrix.BAND_H - 2 * ctx_matrix.vmargin);
+
+    });
+
+    var legendG = svg.append("g")
+        .attr("id", "colorLegend")
+        .attr("transform", "translate(" + 600 + "," + 50 + ")");
+
+    var valueRange4legend = d3.range(0, 1200, 10).reverse();
+    var scale4colorLegend = d3.scaleLinear()
+        .domain([0, 1200])
+        .rangeRound([2 * valueRange4legend.length, 0]);
+
+    legendG.selectAll("line")
+        .data(valueRange4legend)
+        .enter()
+        .append("line")
+        .attr("x1", 0)
+        .attr("y1", (d, j) => (2 * j))
+        .attr("x2", ctx_matrix.BAND_H)
+        .attr("y2", (d, j) => (2 * j))
+        .attr("stroke-width", 2)
+        .attr("stroke", (d) => (color(d)));
+
+
+    legendG.append("g")
+        .attr("transform", "translate(" + (ctx_matrix.BAND_H + 4) + ",0)")
+        .call(d3.axisRight(scale4colorLegend).ticks(5));
+
+}

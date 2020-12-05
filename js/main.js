@@ -15,8 +15,8 @@ var ctx = {
     valueExtentOverAllSeries: [0, 0],
     showScore: true,
 
-    w1: 1000,
-    h1: 800,
+    w1: 700,
+    h1: 550,
     mapMode: false,
     MIN_COUNT: 3000,
     ANIM_DURATION: 600, // ms
@@ -92,6 +92,7 @@ var loadData = function() {
         d3.json("data/anime_genre.json"),
         d3.json("data/anime_studio.json"),
         d3.json("data/studio_genre.json"),
+        d3.csv("data/fans_by_genre.csv")
     ];
 
 
@@ -111,8 +112,6 @@ var loadData = function() {
 
         ctx.nodes = data[1];
         ctx.links = data[2];
-        console.log(ctx.nodes);
-        console.log(ctx.links);
 
         // console.log(simulation);
         var svgE2 = d3.select("#clusterGraph").append("svg");
@@ -122,6 +121,13 @@ var loadData = function() {
         svgE2.attr("class", "canvas");
         createGraphLayout(svgE2);
 
+        var svgE4 = d3.select("#clusterGraph").append("svg");
+
+        svgE4.attr("width", ctx.w1);
+        svgE4.attr("height", ctx.h1);
+        svgE4.attr("class", "canvas");
+        createMatrix(svgE4, data[9]);
+
 
         var svgE3 = d3
             .select("#hivePlot")
@@ -130,10 +136,10 @@ var loadData = function() {
             .attr("height", ctx.h2)
             .attr("class", "canvas_dark")
             .append("g")
-            .attr("transform", "translate(" + ctx.w2 / 2 + "," + ctx.w1 / 2 + ")");
-        console.log([data[3], data[4], data[5], data[6], data[7], data[8]]);
-        prePocessingDataHive([data[3], data[4], data[5], data[6], data[7], data[8]]);
-        myHivePlot(svgE3, [data[3], data[4], data[5], data[6], data[7], data[8]]);
+            .attr("transform", "translate(" + ctx.w2 / 2 + "," + ctx.h2 / 2 + ")");
+        // console.log([data[3], data[4], data[5], data[6], data[7], data[8]]);
+        prePocessingDataHive(data.slice(3, 9));
+        myHivePlot(svgE3, data.slice(3, 9));
 
-    }).catch(function(error) { console.log(error) });
+    }).catch(function(error) { console.log(error); });
 };

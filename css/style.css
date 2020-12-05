@@ -14,6 +14,11 @@ svg {
     color: "#112234";
 }
 
+html {
+    padding: 0;
+    background-color: rgb(221, 218, 207);
+}
+
 g {
     font-family: Bangers, sans-serif;
 }
@@ -37,17 +42,18 @@ g {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0;
 }
 
 .canvas {
-    background-color: rgba(255, 255, 255, 0.705);
+    background-color: rgba(255, 255, 255, 0.74);
     margin: 1rem;
     padding: 1rem;
     transition: .5s;
 }
 
 .canvas_dark {
-    background-color: rgba(44, 44, 44, 0.705);
+    background-color: rgba(197, 197, 197, 0.705);
 }
 
 .canvas:hover {
@@ -97,13 +103,10 @@ g {
     font-family: Bangers;
     font-size: 3rem;
     background: linear-gradient(-45deg, #091524f2, #112334f2), url("../img/jojo.png");
-    -webkit-animation: Gradient 10s ease infinite;
-    -moz-animation: Gradient 10s ease infinite;
-    animation: Gradient 10s ease infinite;
     color: white;
     padding: 2rem;
     text-align: center;
-    margin-bottom: 3rem;
+    /* margin-bottom: 3rem; */
     margin-top: 0;
     width: 100%;
 }
@@ -119,20 +122,20 @@ g {
 }
 
 .section-cluster-graph {
-    background: linear-gradient(-45deg, #240909f1, #2c1705f5), url("../img/onepiece.png");
+    background: linear-gradient(-45deg, #092414f1, #2c0505f5), url("../img/onepiece.png");
     background-position: cover;
     margin-top: 5rem;
     padding: 2rem;
     width: 90%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     border-radius: 1rem;
 }
 
 .hiveplot {
-    background: linear-gradient(-45deg, #2b2b2bf1, #808080f5), url("../img/onepiece.png");
+    background: linear-gradient(-45deg, #3F76EBf1, #791e75f1, #38c48cf5), url("../img/onepiece.png");
     background-position: cover;
     margin-top: 5rem;
     padding: 2rem;
@@ -156,18 +159,19 @@ g {
 .link {
     fill: none;
     stroke: #c7c7c7;
-    stroke-width: 1.5px;
-    stroke-opacity: 0.3;
+    stroke-width: 2px;
+    stroke-opacity: 0.4;
 }
 
 .hiveplot .link.active {
-    stroke: rgb(255, 255, 255);
+    stroke: rgb(226, 59, 59);
     stroke-width: 2px;
     stroke-opacity: 1;
+    /* z-index: 90; */
 }
 
 .hiveplot .node rect.active {
-    stroke: rgba(50, 136, 235, 0.884);
+    stroke: rgba(235, 72, 50, 0.884);
     stroke-width: 3px;
 }
 
@@ -176,7 +180,7 @@ g {
 }
 
 .hiveplot .node circle.active {
-    stroke: rgba(50, 136, 235, 0.884);
+    stroke: rgba(235, 78, 50, 0.884);
     stroke-width: 3px;
 }
 
@@ -190,6 +194,35 @@ g {
     font-family: Bangers;
     background-color: rgba(255, 255, 255, 0.397);
     border-radius: 10px;
-    box-shadow: 0 10px 12px black;
+    box-shadow: 0 5px 2px rgba(133, 133, 133, 0.548);
     padding: 1rem;
+}
+
+
+/* description styling */
+
+.description {
+    margin: 1rem;
+    display: flex;
+    flex-direction: column;
+    padding: 5rem 30%;
+    color: rgb(5, 0, 0);
+    background-color: rgba(194, 192, 186, 0);
+    justify-content: center;
+    align-items: center;
+    /* font-family: "Bangers"; */
+}
+
+.description-title {
+    font-family: "Bangers";
+    font-size: 2rem;
+}
+
+.description-content {
+    font-family: "Damion";
+    font-size: 1.5rem;
+}
+
+p {
+    margin: .5rem;
 }
